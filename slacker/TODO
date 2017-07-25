@@ -1,0 +1,9 @@
+allow a slackerfile to take a list of files to send
+
+fix bug in get_current_commands_info
+
+check command to print commands description (once get_current_commands_info is fixed) [currently running slacker with no args yields options, or using the -o or -a flags]
+
+allow command to print long commands description (including the message and files to send)
+
+`slacker set-class` to set the class

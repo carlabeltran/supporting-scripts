@@ -1,0 +1,11 @@
+'11':
+  description: explain instructions for blah blah
+  message: do blah blah blah
+'9':
+  description: Send the Github help PDF
+  filepath: Activities/1-HTML_Git # relative path from this slackerfile
+  message: Use this to learn to upload to Github
+hw:
+  description: Their HW for this week
+  filepath: ~/lesson-plans/Supplemental/1.2/homework/ # absolute path
+  message: Do the hw like this, blah blah
