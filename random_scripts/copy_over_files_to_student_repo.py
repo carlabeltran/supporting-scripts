@@ -8,6 +8,8 @@ LESSONS_REPO_PATH = os.path.join(HOMEPATH, 'projects/trilogy_TA_class/lesson-pla
 LESSONS_CLASS_CONTENT_PATH = os.path.join(LESSONS_REPO_PATH, '01-Class-Content')
 
 ACTIVITIES = '01-Activities'
+HOMEWORK = '02-Homework'
+
 # input and raw_input are completely different in python2 vs 3, when you give input 'all' in python2, it returns the built in function all()
 # error out if the script is ran with python2
 if sys.version_info.major == 2:
@@ -73,12 +75,32 @@ def copytree(src, dst, symlinks=False, ignore=None):
     for item in os.listdir(src):
         s = os.path.join(src, item)
         d = os.path.join(dst, item)
-        if os.path.isdir(s):
-            shutil.copytree(s, d, symlinks, ignore)
-        else:
-            shutil.copy2(s, d)
+        try:
+            if os.path.isdir(s):
+                shutil.copytree(s, d, symlinks, ignore)
+            else:
+                shutil.copy2(s, d)
+        except:
+            # print("This directory already exists: %s" % d)
+            pass
 
-def copy_activity_folder(week, activity_number):
+def get_available_activities(week):
+    this_week_class_content_folder = find_matching_class_content_folder(week)
+    activities_folder = os.path.join(LESSONS_CLASS_CONTENT_PATH, this_week_class_content_folder, ACTIVITIES)
+    activities_subdirectories = get_subdirectories(activities_folder)
+    return activities_subdirectories
+
+def copy_activity_folder(week, activity_name):
+    this_week_class_content_folder = find_matching_class_content_folder(week)
+    if not this_week_class_content_folder:
+        raise Exception("Couldn't find that class_content_folder")
+    activities_folder = os.path.join(LESSONS_CLASS_CONTENT_PATH, this_week_class_content_folder, ACTIVITIES)
+    this_activity_folder = os.path.join(activities_folder, activity_name)
+    class_repo_week_path = os.path.join(STUDENT_REPO_PATH, this_week_class_content_folder, ACTIVITIES, activity_name)
+    make_directory_if_doesnt_exist(class_repo_week_path)
+    copytree(this_activity_folder, class_repo_week_path)
+
+def copy_activity_by_number(week, activity_number):
     activity_number_string = ensure_two_digit_number_string(activity_number)
     this_week_class_content_folder = find_matching_class_content_folder(week)
     if not this_week_class_content_folder:
@@ -92,61 +114,55 @@ def copy_activity_folder(week, activity_number):
     except:
         raise Exception("Couldn't find that activity folder: %s" % (activities_folder + '/' + week + '-...'))
 
-    print('folder_name')
-    print(folder_name)
-    print('this_activity_folder')
-    print(this_activity_folder)
-
     class_repo_week_path = os.path.join(STUDENT_REPO_PATH, this_week_class_content_folder, ACTIVITIES, folder_name)
     make_directory_if_doesnt_exist(class_repo_week_path)
-
-    print('class_repo_week_path')
-    print(class_repo_week_path)
-
     copytree(this_activity_folder, class_repo_week_path)
 
+def copy_all_assignments(week):
+    activities_subdirectories = get_available_activities(week)
+    for name in activities_subdirectories:
+        copy_activity_folder(week, name)
+
+def copy_homework(week):
+    this_week_class_content_folder = find_matching_class_content_folder(week)
+    this_week_homework_instructions_folder = os.path.join(LESSONS_CLASS_CONTENT_PATH, this_week_class_content_folder, HOMEWORK, 'Instructions')
+    class_repo_homework_path = os.path.join(STUDENT_REPO_PATH, this_week_class_content_folder, HOMEWORK)
+    make_directory_if_doesnt_exist(class_repo_homework_path)
+    print(this_week_homework_instructions_folder)
+    print(class_repo_homework_path)
+    copytree(this_week_homework_instructions_folder, class_repo_homework_path)
 
 
+gather_arg("What week are you uploading for?", "week")
+if not COLLECTED_ARGS['week']:
+    raise Exception("Please enter a week")
+week = ensure_two_digit_number_string(COLLECTED_ARGS['week'])
 
-def copy_all_assignments(week_number):
-    pass
+activities_subdirectories = get_available_activities(week)
+print("\nAvailable activities:")
+for activity in activities_subdirectories:
+    print("    %s" % activity)
+print("\n")
 
+gather_arg("Enter an activity number to upload from, 'all' for all activities this week, or leave blank to not upload activities", "assignment_start")
 
-# gather_arg("What week are you uploading for?", "week")
-# COLLECTED_ARGS['week'] = ensure_two_digit_number_string(COLLECTED_ARGS['week'])
-#
-# gather_arg("If you want to upload assignments, either enter 'all', 'none', or the assignment number to start from", "assignment_start")
-#
-# start = COLLECTED_ARGS['assignment_start']
-# print(start)
+start = COLLECTED_ARGS['assignment_start']
 
-# TODO: revert
-start = 'none'
-
-if start == 'none':
+if not start:
     pass
 elif start == 'all':
-    copy_all_assignments(COLLECTED_ARGS['week'])
+    copy_all_assignments(week)
 else:
     gather_arg("Enter the assignment number to end uploading at:", "assignment_end")
-    week, start, end = COLLECTED_ARGS['week'], COLLECTED_ARGS['assignment_start'], COLLECTED_ARGS['assignment_end']
-    print(week)
-    print(find_matching_class_content_folder(week))
-    # print(find_matching_class_content_folder(start))
-    # print(find_matching_class_content_folder(end))
+    end = int(COLLECTED_ARGS['assignment_end'])
+    for i in range(start, end + 1):
+        copy_activity_by_number(week, i)
 
-COLLECTED_ARGS['week'] = '18'
 
-# print(find_matching_class_content_folder(week))
+gather_arg("Do you want to copy HW for this week? ('y' or 'yes' for yes; leave blank for 'no')", "hw_boolean")
+if COLLECTED_ARGS['hw_boolean'].lower().startswith('y'):
+    copy_homework(week)
 
-copy_activity_folder(COLLECTED_ARGS['week'], '04')
-
-# generator = walklevel(LESSONS_CLASS_CONTENT_PATH)
-#
-# for root, dirs, files in generator:
-#     print(root)
-#     print(dirs)
-#     print(files)
 
 
 #-------------------------------------------------------------------------------------------------------------------
