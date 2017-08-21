@@ -14,8 +14,8 @@ HOME = os.path.expanduser('~')
 CWD = os.getcwd() # the path from which this script was invoked
 
 LESSON_PLANS_PROJECT_REPO="{home}/projects/trilogy_TA_class/lesson-plans".format(home=HOME)
-# DEFAULT_CHANNEL = "general"
-DEFAULT_CHANNEL = "t-th-instructions"
+DEFAULT_CHANNEL = "general"
+# DEFAULT_CHANNEL = "t-th-instructions"
 # DEFAULT_CHANNEL = "m-w-instructions"
 # DEFAULT_CHANNEL = "api-testing"
 
@@ -161,7 +161,6 @@ class Slacker(object):
             elif number_b < number_a:
                 return b
             else:
-                import ipdb; ipdb.set_trace()
                 remainder_a = copy(a_as_string).lstrip(number_a)
                 remainder_b = copy(b_as_string).lstrip(number_b)
                 if remainder_a < remainder_b:
