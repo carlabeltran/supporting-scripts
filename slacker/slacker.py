@@ -14,8 +14,8 @@ HOME = os.path.expanduser('~')
 CWD = os.getcwd() # the path from which this script was invoked
 
 LESSON_PLANS_PROJECT_REPO="{home}/projects/trilogy_TA_class/lesson-plans".format(home=HOME)
-DEFAULT_CHANNEL = "general"
-# DEFAULT_CHANNEL = "t-th-instructions"
+# DEFAULT_CHANNEL = "general"
+DEFAULT_CHANNEL = "t-th-instructions"
 # DEFAULT_CHANNEL = "m-w-instructions"
 # DEFAULT_CHANNEL = "api-testing"
 
@@ -190,6 +190,8 @@ class Slacker(object):
             channel = self.main_student_channel
         if os.path.isdir(filepath):
             filepath = self.zip_up_directory(filepath)
+
+        print('filepath:')
         print(filepath)
 
         command = """
@@ -216,19 +218,17 @@ class Slacker(object):
         # http://stackoverflow.com/questions/1855095/how-to-create-a-zip-archive-of-a-directory/
         # https://pymotw.com/2/zipfile/
         filepath = filepath.rstrip('/')
-        if '/' in filepath:
-            basename = os.path.basename(filepath)
-        else:
-            basename = filepath
-        print(filepath)
-        print(basename)
-        zip_path = os.path.join('/tmp', basename + '.zip')
+        root, basename = os.path.split(filepath)
+        if 'solved' in basename.lower() or 'unsolved' in basename.lower():
+            renamed_filepath = root + '--' + basename
+        zip_path = os.path.join('/tmp', renamed_filepath + '.zip')
 
         def zipdir(path, ziphandler):
             """ path is what you want to zip up, ziph is how to zip it up """
             for root, dirs, files in os.walk(path):
-                for file in files:
-                    ziphandler.write(os.path.join(root, file))
+                for f in files:
+                    thispath = os.path.join(root, f)
+                    ziphandler.write(thispath)
 
         zipf = zipfile.ZipFile(zip_path, 'w', zipfile.ZIP_DEFLATED)
         zipdir(filepath, zipf)

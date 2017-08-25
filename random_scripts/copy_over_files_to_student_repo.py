@@ -15,24 +15,6 @@ HOMEWORK = '02-Homework'
 if sys.version_info.major == 2:
     raise Exception("This script has to use python3...rerun with `python3 {name}`".format(name=__file__))
 
-
-"""
-run script:
-    if an assignment number range isn't given (1 8 for copying from 1 to 8, etc) or the word 'all' or 'none' isnt given:
-        raise error message
-
-if first arg isn't "none":
-    given a week number, copy over all assignment folders up to a given number, or the word 'all':
-        make 01-Assignments in the student folder for that week if needed
-        copy each of those folders over to student folder as needed
-
-prompt runner if they want to also upload HW now:
-    if yes:
-        upload HW instructions (and images if available)
-
-
-"""
-
 COLLECTED_ARGS = {}
 
 def gather_arg(question, arg_key):
@@ -128,8 +110,6 @@ def copy_homework(week):
     this_week_homework_instructions_folder = os.path.join(LESSONS_CLASS_CONTENT_PATH, this_week_class_content_folder, HOMEWORK, 'Instructions')
     class_repo_homework_path = os.path.join(STUDENT_REPO_PATH, this_week_class_content_folder, HOMEWORK)
     make_directory_if_doesnt_exist(class_repo_homework_path)
-    print(this_week_homework_instructions_folder)
-    print(class_repo_homework_path)
     copytree(this_week_homework_instructions_folder, class_repo_homework_path)
 
 
