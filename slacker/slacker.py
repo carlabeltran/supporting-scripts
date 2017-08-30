@@ -221,7 +221,9 @@ class Slacker(object):
         root, basename = os.path.split(filepath)
         if 'solved' in basename.lower() or 'unsolved' in basename.lower():
             renamed_filepath = root + '--' + basename
-        zip_path = os.path.join('/tmp', renamed_filepath + '.zip')
+            zip_path = os.path.join('/tmp', renamed_filepath + '.zip')
+        else:
+            zip_path = os.path.join('/tmp', basename + '.zip')
 
         def zipdir(path, ziphandler):
             """ path is what you want to zip up, ziph is how to zip it up """
