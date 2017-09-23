@@ -38,6 +38,8 @@ def make_directory_if_doesnt_exist(path):
 
 def get_subdirectories(path):
     """ gets the directories immediately below the path """
+    # import ipdb; ipdb.set_trace()
+    print("path: %s" % path)
     return next(os.walk(path))[1]
 
 def ensure_two_digit_number_string(week):
@@ -135,7 +137,7 @@ elif start == 'all':
 else:
     gather_arg("Enter the assignment number to end uploading at:", "assignment_end")
     end = int(COLLECTED_ARGS['assignment_end'])
-    for i in range(start, end + 1):
+    for i in range(int(start), int(end) + 1):
         copy_activity_by_number(week, i)
 
 
